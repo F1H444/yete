@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# <p align="center">🚀 YETE.IO — Premium YouTube Extractor</p>
 
-## Getting Started
+<p align="center">
+  <strong>The Ultimate High-Performance YouTube Content Extraction Tool.</strong><br>
+  <em>Engineered for Speed. Designed for Precision. Powered by Modern Tech.</em>
+</p>
 
-First, run the development server:
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚡ Core Capabilities
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+YETE.io is not just another downloader; it's a high-performance utility designed to provide the cleanest extraction experience for YouTube content.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **💎 Sharp 4K Extraction**: Download video in native resolutions up to 4K without quality loss.
+- **🎵 Studio Audio**: Extract pristine MP3 audio at maximum 320kbps bitrate.
+- **🛡️ Pure Privacy**: No tracking, no accounts. Your data remains yours.
+- **📱 Mobile Optimized**: Fully responsive architecture for Android, iOS, and Desktop.
+- **🌪️ Hyper Speed**: Multi-threaded extraction engine for instant processing.
+- **🔒 Secure Core**: Verified safe downloads with encrypted server-side streaming.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Technical Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### The Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend**: [Next.js 16 (App Router)](https://nextjs.org/) for blazing fast transitions and SEO.
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) with a custom **Glassmorphism Design System**.
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) for fluid, premium micro-interactions.
+- **Backend**: [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) handling complex extraction logic.
+- **Engine**: [@distube/ytdl-core](https://www.npmjs.com/package/@distube/ytdl-core) for reliable media parsing.
+- **Icons**: [Lucide React](https://lucide.dev/) for a sharp, modern UI.
 
-## Deploy on Vercel
+### Key Innovation: Streaming Proxy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To overcome client-side restrictions and ensure 100% reliable downloads, YETE.io implements a **Server-Side Streaming Proxy**.
+Instead of serving direct YouTube URLs (which are often throttled or blocked), our engine:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  Fetches the stream server-side.
+2.  Proxies the data through our `/api/stream` route.
+3.  Injects proper `Content-Disposition` headers to force a clean, renamed download.
+
+---
+
+## 🚀 Getting Started
+
+To run the YETE.io engine locally:
+
+1.  **Clone & Install**:
+
+    ```bash
+    git clone https://github.com/your-username/yete.git
+    cd yete
+    npm install
+    ```
+
+2.  **Launch Dev Server**:
+
+    ```bash
+    npm run dev
+    ```
+
+3.  **Access Dashboard**:
+    Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🌑 Aesthetic Identity
+
+YETE.io follows a **"YouTube Red/White"** theme but elevated with:
+
+- **Solid Black Backgrounds**: `#0a0a0a` for maximum contrast and focus.
+- **Elegant Glassmorphism**: High-end backdrop blur effects for UI components.
+- **Premium Typography**: Pairing `Outfit` (Headings) and `Plus Jakarta Sans` (Body).
+- **Zero Gradients**: A clean, modern look achieved through solid geometry and subtle borders.
+
+---
+
+<p align="center">
+  MADE WITH ❤️ FOR THE WEB | YETE.IO CORE ENGINE © 2026
+</p>

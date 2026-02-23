@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN SYSTEM — YOUTUBE RED/WHITE THEME
+   SHARP. CLEAN. IMPACTFUL. (NO GRADIENTS)
+   ============================================ */
+
+@theme inline {
+  --color-background: #0a0a0a;   /* Slightly deeper black */
+  --color-foreground: #ffffff;
+  --color-surface: #121212;
+  --color-surface-hover: #1e1e1e;
+  
+  /* YouTube Brand Colors - Refined */
+  --color-primary: #ff0000;
+  --color-primary-hover: #df0000;
+  --color-secondary: #ffffff;
+  --color-accent: #1f1f1f;
+  
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-border-bright: rgba(255, 255, 255, 0.12);
+  
+  /* Glassmorphism Defaults */
+  --glass-bg: rgba(18, 18, 18, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  
+  /* Font Families */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  --radius-xl: 0.6rem;
+  --radius-2xl: 1rem;
+
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(255, 0, 0, 0.15);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Premium Layout Utilities */
+.premium-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section Utilities */
+.section-padding {
+  padding: 10rem 0;
+}
+
+.full-screen-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Glassmorphism Class */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Dashboard Grid System */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2.5rem;
+}
+
+/* Decorative Accents */
+.brand-sidebar {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.brand-sidebar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+/* Texture Layer */
+.texture-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Elegant Card Foundation */
+.elegant-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+.elegant-card:hover {
+  border-color: var(--color-border-bright);
+  background: var(--color-surface-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-premium);
+}
+
+/* Premium Button (Elevated YT Style) */
+.yt-premium-button {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.yt-premium-button:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.25);
+}
+
+.yt-premium-button:active {
+  transform: translateY(0);
+}
+
+/* Secondary/Outline Button */
+.yt-premium-outline {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-bright);
+  color: var(--color-foreground);
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.yt-premium-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: white;
+}
+
+/* Input Styles - Premium */
+.yt-premium-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.125rem 1.75rem;
+  color: white;
+  width: 100%;
+  outline: none;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px;
+  border: 2px solid #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
