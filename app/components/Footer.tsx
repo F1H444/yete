@@ -1,64 +1,79 @@
 "use client";
 
-import { Heart, Github, Twitter, Mail, Video } from "lucide-react";
+import Image from "next/image";
+import { Heart } from "lucide-react";
 
-export default function Footer() {
+interface FooterProps {
+  t: any;
+}
+
+export default function Footer({ t }: FooterProps) {
   return (
-    <footer className="relative pt-32 pb-16 overflow-hidden bg-[#0a0a0a] border-t border-white/[0.03]">
+    <footer className="relative pt-24 sm:pt-32 pb-12 sm:pb-16 overflow-hidden bg-[#0a0a0a] border-t border-white/[0.03]">
       <div className="premium-container relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-20 mb-24">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-20 mb-16 sm:mb-24">
+          <div className="sm:col-span-2">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg">
-                <Video className="w-6 h-6" fill="currentColor" />
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-red-600 flex items-center justify-center overflow-hidden shadow-lg">
+                <Image 
+                  src="/logo.png" 
+                  alt="YETE Logo" 
+                  width={44} 
+                  height={44} 
+                  className="w-full h-full object-contain p-1.5"
+                />
               </div>
-              <span className="text-3xl font-black tracking-tighter font-display text-white italic uppercase">
-                YETE<span className="text-red-600 not-italic">.io</span>
+              <span className="text-2xl sm:text-3xl font-black tracking-tight font-display text-white italic">
+                YETE
               </span>
             </div>
-            <p className="max-w-md font-medium text-white/30 text-[10px] leading-relaxed mb-10 uppercase tracking-[0.2em]">
-              THE ULTIMATE HIGH-PERFORMANCE YOUTUBE CONVERTER. 
-              EFFICIENCY IS OUR PRIORITY, QUALITY IS OUR STANDARD. 
-              PURE WEB-BASED UTILITY.
+            <p className="text-white/30 text-[10px] sm:text-xs font-medium uppercase tracking-[0.25em] leading-[2] max-w-md">
+              {t.desc}
             </p>
-            <div className="flex gap-4">
-              {[Github, Twitter, Mail].map((Icon, idx) => (
-                <a key={idx} href="#" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-red-600 hover:border-red-600/30 transition-all duration-300">
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-1 lg:grid-cols-1 gap-12 sm:gap-0 lg:contents">
+            <div>
+              <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-white mb-6 sm:mb-10 italic">{t.nav}</h4>
+              <ul className="space-y-4 sm:space-y-6">
+                {["Converter", "Features", "How it Works", "FAQ"].map((item) => (
+                  <li key={item}>
+                    <a href={`#${item.toLowerCase().replace(/\s+/g, '')}`} className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-red-600 transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          <div>
-            <h4 className="font-display font-black text-[10px] text-white/50 mb-10 italic uppercase tracking-[0.3em]">Navigation</h4>
-            <ul className="space-y-4 font-bold text-[9px] uppercase tracking-[0.3em] text-white/30">
-              <li><a href="#" className="hover:text-red-600 transition-colors">Home Dashboard</a></li>
-              <li><a href="#downloader" className="hover:text-red-600 transition-colors">Video Downloader</a></li>
-              <li><a href="#features" className="hover:text-red-600 transition-colors">Server Features</a></li>
-              <li><a href="#faq" className="hover:text-red-600 transition-colors">Help Center</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-display font-black text-[10px] text-white/50 mb-10 italic uppercase tracking-[0.3em]">Legal Docs</h4>
-            <ul className="space-y-4 font-bold text-[9px] uppercase tracking-[0.3em] text-white/30">
-              <li><a href="#" className="hover:text-red-600 transition-colors">Terms of Use</a></li>
-              <li><a href="#" className="hover:text-red-600 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-red-600 transition-colors">DMCA Compliance</a></li>
-            </ul>
+            <div className="sm:mt-12 lg:mt-0">
+              <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-white mb-6 sm:mb-10 italic">{t.legal}</h4>
+              <ul className="space-y-4 sm:space-y-6">
+                {["Terms", "Privacy", "Cookies", "DMCA"].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-red-600 transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10 border-t border-white/[0.03] pt-16">
-          <div className="flex items-center gap-4 font-bold uppercase text-[9px] tracking-[0.3em] text-white/20">
-            <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" /> ENGINE ONLINE</span>
-            <span className="w-px h-3 bg-white/5" />
-            MADE WITH <Heart className="w-3 h-3 fill-red-600 text-red-600" /> FOR THE WEB
+        <div className="pt-12 sm:pt-16 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-10">
+          <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-6">
+            <div className="flex items-center gap-2 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-red-600 bg-red-600/5 px-4 py-2 rounded-full border border-red-600/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+              {t.engine}
+            </div>
+            <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-white/20">
+              {t.made}
+            </p>
           </div>
           
-          <div className="text-center md:text-right font-bold italic text-[9px] uppercase tracking-[0.3em] text-white/10">
-            YETE.IO CORE ENGINE © 2026. ALL RIGHTS RESERVED.
+          <div className="flex items-center gap-3 text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-white/20 text-center sm:text-right">
+            {t.rights}
           </div>
         </div>
       </div>

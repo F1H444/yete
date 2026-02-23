@@ -16,7 +16,11 @@ type VideoData = {
   ext: string;
 };
 
-export default function DownloaderForm() {
+interface DownloaderFormProps {
+  t: any;
+}
+
+export default function DownloaderForm({ t }: DownloaderFormProps) {
   const [url, setUrl] = useState("");
   const [format, setFormat] = useState<Format>("video");
   const [loading, setLoading] = useState(false);
@@ -40,11 +44,8 @@ export default function DownloaderForm() {
       
       if (res.success) {
         setVideoData(res.data);
-        // Direct Download Logic: Start downloading immediately
         const link = document.createElement("a");
         link.href = res.data.downloadUrl;
-        // The server already sets the correct filename in the header,
-        // but we can set it here too as a fallback.
         link.setAttribute("download", `${res.data.title}.${res.data.ext}`);
         document.body.appendChild(link);
         link.click();
@@ -66,73 +67,73 @@ export default function DownloaderForm() {
   };
 
   return (
-    <section id="downloader" className="relative -mt-16 pb-32 z-20">
+    <section id="downloader" className="relative -mt-16 sm:-mt-24 pb-20 sm:pb-32 z-20 px-4">
       <div className="premium-container max-w-5xl">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="elegant-card p-10 sm:p-16 glass-effect shadow-2xl border-white/[0.05]"
+          className="elegant-card p-6 sm:p-10 md:p-16 glass-effect shadow-2xl border-white/[0.05]"
         >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-16">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-12 sm:mb-16">
             <div>
               <div className="flex items-center gap-2 text-red-600 font-bold text-[10px] uppercase tracking-[0.3em] mb-4">
                 <Sparkles className="w-3 h-4" />
-                PREMIUM EXTRACTION TOOL
+                {t.badge}
               </div>
-              <h2 className="text-4xl sm:text-5xl font-black font-display tracking-tight text-white uppercase italic">
-                READY TO <span className="text-red-600 not-italic">SAVE?</span>
+              <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-white uppercase italic">
+                {t.title_1} <span className="text-red-600 not-italic">{t.title_2}</span>
               </h2>
             </div>
             
-            <div className="flex p-1.5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+            <div className="flex w-full md:w-auto p-1 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 backdrop-blur-md">
               <button 
                 onClick={() => setFormat("video")}
-                className={`flex items-center gap-2.5 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${format === 'video' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-4 sm:px-8 py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all ${format === 'video' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
               >
-                <Video className="w-4 h-4" /> Video
+                <Video className="w-4 h-4" /> {t.format_video}
               </button>
               <button 
                 onClick={() => setFormat("audio")}
-                className={`flex items-center gap-2.5 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${format === 'audio' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2.5 px-4 sm:px-8 py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all ${format === 'audio' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
               >
-                <Music className="w-4 h-4" /> Audio
+                <Music className="w-4 h-4" /> {t.format_audio}
               </button>
             </div>
           </div>
 
-          <form onSubmit={handleFetch} className="relative mb-4 group">
-            <div className="absolute left-7 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-red-600 transition-colors pointer-events-none">
-              <Search className="w-6 h-6" />
+          <form onSubmit={handleFetch} className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="relative flex-1 group">
+              <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-red-600 transition-colors pointer-events-none">
+                <Search className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <input
+                type="text"
+                placeholder={t.placeholder}
+                className="yt-premium-input !pl-16 !pr-6 !py-5 sm:!py-6 !text-base sm:!text-lg w-full"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={loading}
+                required
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Enter YouTube URL here..."
-              className="yt-premium-input !pl-20 !pr-48 !py-6 !text-lg"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              disabled={loading}
-              required
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center h-full py-3">
-              <button
-                type="submit"
-                disabled={loading || !url}
-                className="yt-premium-button !h-full !px-10 disabled:opacity-50 !text-[10px] flex items-center justify-center gap-3"
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <Zap className="w-4 h-4" />
-                    INITIATE
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading || !url}
+              className="yt-premium-button w-full md:w-auto !h-auto !py-5 sm:!py-6 !px-10 disabled:opacity-50 !text-[10px] sm:!text-[11px] flex items-center justify-center gap-3 shadow-xl"
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {t.btn_initiate}
+                </>
+              )}
+            </button>
           </form>
-          <p className="text-[10px] font-medium text-white/20 uppercase tracking-[0.2em] ml-1 mb-10">
-            Paste your link above to start high-speed extraction.
+          <p className="text-[9px] sm:text-[10px] font-medium text-white/20 uppercase tracking-[0.2em] ml-1 mb-8 sm:mb-10">
+            {t.hint}
           </p>
 
           <AnimatePresence>
@@ -155,10 +156,10 @@ export default function DownloaderForm() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="mt-10 pt-10 border-t border-white/10"
+                className="mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-white/10"
               >
-                <div className="flex flex-col lg:flex-row gap-10">
-                  <div className="lg:w-2/5">
+                <div className="flex flex-col lg:flex-row gap-8 sm:gap-10">
+                  <div className="w-full lg:w-2/5">
                     <div className="rounded-xl overflow-hidden border border-white/10 aspect-video relative bg-black shadow-xl group/thumb">
                       <img 
                         src={videoData.thumbnail} 
@@ -172,18 +173,18 @@ export default function DownloaderForm() {
                     </div>
                   </div>
 
-                  <div className="lg:w-3/5 flex flex-col justify-between py-1">
-                    <div>
-                      <h3 className="text-2xl sm:text-3xl font-black font-display tracking-tight leading-tight mb-6 text-white uppercase italic">
+                  <div className="w-full lg:w-3/5 flex flex-col justify-between py-1">
+                    <div className="mb-8">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black font-display tracking-tight leading-tight mb-6 text-white uppercase italic">
                         {videoData.title}
                       </h3>
-                      <div className="flex gap-10 mb-8">
+                      <div className="flex flex-wrap gap-6 sm:gap-10">
                         <div className="flex flex-col gap-1.5">
-                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Provider</span>
+                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">{t.provider}</span>
                           <span className="text-xs font-black text-red-600 uppercase italic">{videoData.channel}</span>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Quality</span>
+                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">{t.quality}</span>
                           <span className="text-xs font-black text-white uppercase italic">{videoData.quality}</span>
                         </div>
                       </div>
@@ -192,12 +193,12 @@ export default function DownloaderForm() {
                     <a
                       href={videoData.downloadUrl}
                       download
-                      className="yt-premium-button w-full !py-5 text-[11px] justify-center gap-3 shadow-xl"
+                      className="yt-premium-button w-full !py-5 text-[10px] sm:text-[11px] justify-center gap-3 shadow-xl"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <Download className="w-5 h-5" />
-                      DOWNLOAD {videoData.ext.toUpperCase()} (ULTRA-HD)
+                      {t.btn_download} {videoData.ext.toUpperCase()} (ULTRA-HD)
                     </a>
                   </div>
                 </div>

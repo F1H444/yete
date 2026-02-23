@@ -1,67 +1,59 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MousePointer2, Settings2, Sparkles, Play } from "lucide-react";
+import { MousePointer2, Settings2, Sparkles } from "lucide-react";
 
-const steps = [
-  { num: "01", title: "Copy Link", desc: "Grab the URL from any YouTube video, shorts, or high-quality music track.", icon: MousePointer2 },
-  { num: "02", title: "Select Format", desc: "Choose between high-definition MP4 video or crystal clear 320kbps MP3.", icon: Settings2 },
-  { num: "03", title: "Instant Download", desc: "Our engine processes your request instantly for immediate conversion.", icon: Sparkles },
-];
+interface HowItWorksProps {
+  t: any;
+}
 
-export default function HowItWorks() {
+export default function HowItWorks({ t }: HowItWorksProps) {
   return (
     <section id="how" className="section-padding relative overflow-hidden bg-[#0a0a0a]">
       <div className="absolute top-0 inset-x-0 h-px bg-white/5" />
       
-      <div className="premium-container relative z-10">
+      <div className="premium-container relative z-10 px-6 sm:px-10">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-20">
-            <div className="flex items-center gap-3 text-red-600 font-bold text-[10px] uppercase tracking-[0.3em] mb-4 justify-center">
-              <Play className="w-3 h-3 fill-current" />
-              EXTRACTION LOGIC
+          <div className="text-center mb-16 sm:mb-24">
+            <div className="flex items-center justify-center gap-3 text-red-600 font-bold text-[10px] uppercase tracking-[0.3em] mb-4 sm:mb-6">
+              <MousePointer2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              {t.badge}
             </div>
-            <h2 className="text-4xl sm:text-7xl font-black font-display tracking-tighter text-white uppercase italic leading-none">
-              PROCESS <span className="text-red-600 not-italic">WORKFLOW</span>
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tighter text-white uppercase italic leading-[0.9]">
+              {t.title_1} <span className="text-red-600 not-italic">{t.title_2}</span>
             </h2>
           </div>
 
-          <div className="space-y-4 relative">
-            <div className="absolute left-[50%] top-0 bottom-0 w-px bg-white/5 hidden lg:block" />
-            
-            {steps.map((s, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                className={`flex flex-col lg:flex-row items-center gap-10 ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
-              >
-                <div className="lg:w-1/2 flex justify-center lg:justify-end">
-                  <div className={`elegant-card p-10 glass-effect w-full max-w-md ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                    <h3 className="text-2xl font-black font-display text-white tracking-tight uppercase italic group-hover:text-red-600 transition-colors mb-4">
-                      {s.title}
-                    </h3>
-                    <p className="text-white/40 font-medium text-[10px] uppercase tracking-widest leading-relaxed">
-                      {s.desc}
-                    </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {t.steps.map((step: any, i: number) => {
+              const icons = [MousePointer2, Settings2, Sparkles];
+              const Icon = icons[i] || Sparkles;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="elegant-card p-8 sm:p-10 group glass-effect"
+                >
+                  <div className="flex items-start justify-between mb-8 sm:mb-10">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <span className="text-3xl sm:text-4xl font-black font-display text-white/5 group-hover:text-red-600/20 transition-colors">
+                      {step.num}
+                    </span>
                   </div>
-                </div>
-
-                <div className="relative z-20 flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-black border border-red-600/50 flex items-center justify-center text-white shadow-[0_0_25px_rgba(255,0,0,0.15)] backdrop-blur-md">
-                    <span className="font-black text-xl italic text-red-600">{s.num}</span>
-                  </div>
-                </div>
-
-                <div className="lg:w-1/2 flex justify-center lg:justify-start">
-                  <div className="hidden lg:block">
-                    <s.icon className="w-16 h-16 text-white/5" strokeWidth={1} />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                  <h3 className="text-lg sm:text-xl font-black font-display text-white tracking-tight uppercase italic mb-3 sm:mb-4 group-hover:text-red-600 transition-colors">
+                    {step.title}
+                  </h3>
+                  <p className="text-white/40 font-medium leading-relaxed text-[9px] sm:text-[10px] uppercase tracking-widest group-hover:text-white/60 transition-colors">
+                    {step.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

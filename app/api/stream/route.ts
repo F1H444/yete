@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import ytdl from "@distube/ytdl-core";
+import { Readable } from "stream";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,22 +20,40 @@ export async function GET(request: NextRequest) {
     let ext = "";
 
     if (format === "audio") {
-      options = { quality: "highestaudio", filter: "audioonly" };
+      // Find the best audio format explicitly to avoid issues
+      const audioFormat = ytdl.filterFormats(info.formats, "audioonly").sort((a, b) => {
+        return (b.audioBitrate || 0) - (a.audioBitrate || 0);
+      })[0];
+      
+      if (!audioFormat) {
+        return new Response("Audio format not found", { status: 404 });
+      }
+
+      options = { format: audioFormat };
       contentType = "audio/mpeg";
       ext = "mp3";
     } else {
-      options = { quality: "highest", filter: (f: any) => f.container === "mp4" && f.hasVideo && f.hasAudio };
+      const videoFormat = ytdl.filterFormats(info.formats, (f: any) => f.container === "mp4" && f.hasVideo && f.hasAudio).sort((a, b) => {
+        return (b.height || 0) - (a.height || 0);
+      })[0];
+
+      if (!videoFormat) {
+        return new Response("Video format not found", { status: 404 });
+      }
+
+      options = { format: videoFormat };
       contentType = "video/mp4";
       ext = "mp4";
     }
 
-    const stream = ytdl(url, options);
+    const nodeStream = ytdl(url, options);
+    // Convert Node.js Readable stream to Web ReadableStream for Next.js consistency
+    const webStream = Readable.toWeb(nodeStream);
 
-    return new Response(stream as any, {
+    return new Response(webStream as any, {
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${title.replace(/[^a-zA-Z0-9]/g, "_")}.${ext}"`,
-        "Transfer-Encoding": "chunked",
       },
     });
   } catch (error) {

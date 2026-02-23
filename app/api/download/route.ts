@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         views: videoDetails.viewCount,
         downloadUrl: proxyUrl,
         ext: format === "audio" ? "mp3" : "mp4",
-        quality: format === "audio" ? `${selectedFormat.audioBitrate}kbps` : `${selectedFormat.height}p`,
+        quality: format === "audio" ? "320kbps (HQ)" : `${selectedFormat.height}p`,
       }
     });
   } catch (error: any) {
