@@ -19,28 +19,58 @@ export async function POST(request: NextRequest) {
     const info = await ytdl.getInfo(url);
     const videoDetails = info.videoDetails;
 
+    if (videoDetails.isLiveContent) {
+      return NextResponse.json(
+        { error: "Live streams are not supported for high-quality downloads." },
+        { status: 400 }
+      );
+    }
+
     // Filter formats based on user preference
     let selectedFormat;
     if (format === "audio") {
-      // Get the highest quality audio stream
-      selectedFormat = ytdl.filterFormats(info.formats, "audioonly").sort((a, b) => {
+      // Get all audio formats
+      const audioFormats = ytdl.filterFormats(info.formats, "audioonly");
+      // Prioritize m4a (aac) over webm (opus) for better compatibility
+      const m4aAudio = audioFormats.filter(f => f.container === 'mp4');
+      const targetAudio = m4aAudio.length > 0 ? m4aAudio : audioFormats;
+
+      selectedFormat = targetAudio.sort((a, b) => {
         return (b.audioBitrate || 0) - (a.audioBitrate || 0);
       })[0];
+      
+      if (!selectedFormat) {
+        // Fallback to highestaudio if filter didn't work
+        selectedFormat = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
+      }
     } else {
-      // Get the highest quality video+audio stream (MP4)
-      selectedFormat = ytdl.filterFormats(info.formats, (f) => f.container === "mp4" && f.hasVideo && f.hasAudio).sort((a, b) => {
-        return (b.height || 0) - (a.height || 0);
+      // Get the highest quality video+audio stream
+      // We prioritize mp4 container for better compatibility
+      const combinedFormats = ytdl.filterFormats(info.formats, "videoandaudio");
+      
+      const mp4Formats = combinedFormats.filter(f => f.container === 'mp4');
+      const targetFormats = mp4Formats.length > 0 ? mp4Formats : combinedFormats;
+
+      selectedFormat = targetFormats.sort((a, b) => {
+        const heightA = a.height || 0;
+        const heightB = b.height || 0;
+        if (heightB !== heightA) return heightB - heightA;
+        // If resolution is same, prioritize better bitrate
+        return (b.averageBitrate || 0) - (a.averageBitrate || 0);
       })[0];
     }
 
     if (!selectedFormat) {
+      console.error("No format found for:", url, "format:", format);
       return NextResponse.json(
-        { error: "Requested format could not be found for this video." },
+        { error: "Could not find a suitable format for this video." },
         { status: 404 }
       );
     }
 
-    const proxyUrl = `/api/stream?url=${encodeURIComponent(url)}&format=${format}&title=${encodeURIComponent(videoDetails.title)}`;
+    console.log(`Selected format for ${format}:`, selectedFormat.itag, selectedFormat.container, selectedFormat.qualityLabel || selectedFormat.audioBitrate);
+
+    const proxyUrl = `/api/stream?url=${encodeURIComponent(url)}&format=${format}&itag=${selectedFormat.itag}&title=${encodeURIComponent(videoDetails.title)}`;
 
     return NextResponse.json({
       success: true,
@@ -48,17 +78,21 @@ export async function POST(request: NextRequest) {
         title: videoDetails.title,
         channel: videoDetails.author.name,
         thumbnail: videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
-        duration: videoDetails.lengthSeconds,
-        views: videoDetails.viewCount,
+        duration: parseInt(videoDetails.lengthSeconds),
         downloadUrl: proxyUrl,
-        ext: format === "audio" ? "mp3" : "mp4",
-        quality: format === "audio" ? "320kbps (HQ)" : `${selectedFormat.height}p`,
+        ext: format === "audio" ? "mp3" : (selectedFormat.container || "mp4"),
+        quality: format === "audio" ? `${selectedFormat.audioBitrate}kbps` : `${selectedFormat.height}p`,
       }
     });
   } catch (error: any) {
-    console.error("Downloader API Error:", error);
+    console.error("Downloader API Error Trace:", error.message || error);
+    let errorMessage = "Failed to process video.";
+    
+    if (error.message?.includes("private")) errorMessage = "This video is private.";
+    if (error.message?.includes("age-restricted")) errorMessage = "This video is age-restricted.";
+    
     return NextResponse.json(
-      { error: "Failed to process video. It might be age-restricted or private." },
+      { error: errorMessage },
       { status: 500 }
     );
   }

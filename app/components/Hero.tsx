@@ -9,18 +9,9 @@ interface HeroProps {
 
 export default function Hero({ t }: HeroProps) {
   return (
-    <section className="relative min-h-[90vh] flex flex-col justify-center pt-32 pb-32 overflow-hidden bg-[#0a0a0a]">
+    <section className="relative min-h-screen flex flex-col justify-center pt-32 pb-32 overflow-hidden bg-[#0a0a0a]">
       <div className="premium-container relative z-10 px-6 sm:px-10">
         <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3 text-red-600 font-black text-[10px] sm:text-[11px] uppercase tracking-[0.3em] mb-6 sm:mb-8"
-          >
-            <Zap className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
-            {t.badge}
-          </motion.div>
-          
           <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[11rem] font-black font-display tracking-tighter text-white uppercase italic leading-[0.8] mb-8 sm:mb-12">
             {t.title_1} <br />
             <span className="text-red-600 not-italic block mt-4 sm:mt-6">{t.title_2}</span>

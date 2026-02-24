@@ -12,9 +12,9 @@ export default function Header({ t }: HeaderProps) {
       <nav className="premium-container max-w-6xl">
         <div className="glass-effect rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-2xl border-white/[0.05]">
           <a href="/" className="flex items-center gap-2 sm:gap-3 group transition-all active:scale-95">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-red-600 flex items-center justify-center overflow-hidden shadow-lg group-hover:bg-red-700 transition-colors">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 sm:rounded-xl flex items-center justify-center overflow-hidden shadow-lg group-hover:bg-red-700 transition-colors">
               <Image 
-                src="/logo.png" 
+                src="/yt.png" 
                 alt="YETE Logo" 
                 width={40} 
                 height={40} 
@@ -45,9 +45,6 @@ export default function Header({ t }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <a href="https://github.com" className="hidden sm:flex text-white/40 hover:text-white transition-colors">
-              <Github className="w-5 h-5" />
-            </a>
             <a href="#downloader" className="yt-premium-button !py-2 sm:!py-2.5 !px-4 sm:!px-6 !text-[9px] sm:!text-[10px] font-black italic">
               {t.start}
             </a>

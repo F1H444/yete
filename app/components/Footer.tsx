@@ -14,9 +14,9 @@ export default function Footer({ t }: FooterProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-20 mb-16 sm:mb-24">
           <div className="sm:col-span-2">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-red-600 flex items-center justify-center overflow-hidden shadow-lg">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 sm:rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
                 <Image 
-                  src="/logo.png" 
+                  src="/yt.png" 
                   alt="YETE Logo" 
                   width={44} 
                   height={44} 

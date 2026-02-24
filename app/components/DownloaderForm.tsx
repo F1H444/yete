@@ -26,6 +26,7 @@ export default function DownloaderForm({ t }: DownloaderFormProps) {
   const [loading, setLoading] = useState(false);
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [error, setError] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,23 +39,30 @@ export default function DownloaderForm({ t }: DownloaderFormProps) {
     try {
       const resp = await fetch("/api/download", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url, format }),
       });
+      
+      if (!resp.ok) {
+        const errorData = await resp.json();
+        throw new Error(errorData.error || "Failed to parse video.");
+      }
+
       const res = await resp.json();
       
       if (res.success) {
         setVideoData(res.data);
-        const link = document.createElement("a");
-        link.href = res.data.downloadUrl;
-        link.setAttribute("download", `${res.data.title}.${res.data.ext}`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        setError(res.error || "Failed to parse video. Check your URL.");
+        setProcessing(true);
+        
+        // Use a more robust way to trigger the download
+        // window.location.assign is great for forcing the browser to handle the download response
+        setTimeout(() => {
+          window.location.assign(res.data.downloadUrl);
+          setProcessing(false);
+        }, 800);
       }
-    } catch (err) {
-      setError("Server connection failed. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Server connection failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -82,7 +90,7 @@ export default function DownloaderForm({ t }: DownloaderFormProps) {
                 {t.badge}
               </div>
               <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-white uppercase italic">
-                {t.title_1} <span className="text-red-600 not-italic">{t.title_2}</span>
+                {t.title_1}<span className="text-red-600 not-italic">{format === 'video' ? t.title_2_video : t.title_2_audio}</span>
               </h2>
             </div>
             
@@ -158,6 +166,12 @@ export default function DownloaderForm({ t }: DownloaderFormProps) {
                 exit={{ opacity: 0, y: 20 }}
                 className="mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-white/10"
               >
+                {processing && (
+                  <div className="flex items-center gap-2 text-red-500 font-bold text-[10px] mb-4 animate-pulse">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    PREPARING YOUR DOWNLOAD...
+                  </div>
+                )}
                 <div className="flex flex-col lg:flex-row gap-8 sm:gap-10">
                   <div className="w-full lg:w-2/5">
                     <div className="rounded-xl overflow-hidden border border-white/10 aspect-video relative bg-black shadow-xl group/thumb">

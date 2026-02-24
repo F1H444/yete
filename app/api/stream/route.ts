@@ -13,51 +13,58 @@ export async function GET(request: NextRequest) {
       return new Response("Invalid URL", { status: 400 });
     }
 
+    const itag = searchParams.get("itag");
+
     const info = await ytdl.getInfo(url);
     
     let options: any = {};
     let contentType = "";
     let ext = "";
 
-    if (format === "audio") {
-      // Find the best audio format explicitly to avoid issues
-      const audioFormat = ytdl.filterFormats(info.formats, "audioonly").sort((a, b) => {
-        return (b.audioBitrate || 0) - (a.audioBitrate || 0);
-      })[0];
-      
-      if (!audioFormat) {
-        return new Response("Audio format not found", { status: 404 });
+    if (itag) {
+      const selectedFormat = info.formats.find(f => f.itag.toString() === itag);
+      if (selectedFormat) {
+        options = { format: selectedFormat };
+        contentType = format === "audio" ? "audio/mpeg" : (selectedFormat.container === "mp4" ? "video/mp4" : "video/webm");
+        ext = format === "audio" ? "mp3" : (selectedFormat.container || "mp4");
+        console.log(`Direct stream via itag ${itag}: ${contentType}`);
       }
+    } 
 
-      options = { format: audioFormat };
-      contentType = "audio/mpeg";
-      ext = "mp3";
-    } else {
-      const videoFormat = ytdl.filterFormats(info.formats, (f: any) => f.container === "mp4" && f.hasVideo && f.hasAudio).sort((a, b) => {
-        return (b.height || 0) - (a.height || 0);
-      })[0];
-
-      if (!videoFormat) {
-        return new Response("Video format not found", { status: 404 });
+    if (!options.format) {
+      // Fallback logic if itag not found or not provided
+      if (format === "audio") {
+        const audioFormat = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
+        if (!audioFormat) return new Response("Audio format not found", { status: 404 });
+        options = { format: audioFormat };
+        contentType = "audio/mpeg";
+        ext = "mp3";
+      } else {
+        const videoFormat = ytdl.filterFormats(info.formats, "videoandaudio").sort((a, b) => (b.height || 0) - (a.height || 0))[0];
+        if (!videoFormat) return new Response("Video format not found", { status: 404 });
+        options = { format: videoFormat };
+        contentType = videoFormat.container === "mp4" ? "video/mp4" : "video/webm";
+        ext = videoFormat.container || "mp4";
       }
-
-      options = { format: videoFormat };
-      contentType = "video/mp4";
-      ext = "mp4";
     }
 
     const nodeStream = ytdl(url, options);
-    // Convert Node.js Readable stream to Web ReadableStream for Next.js consistency
     const webStream = Readable.toWeb(nodeStream);
+
+    const safeTitle = title.replace(/[^\x20-\x7E]/g, "").replace(/[\\/:*?"<>|]/g, "_");
+    const encodedTitle = encodeURIComponent(safeTitle);
 
     return new Response(webStream as any, {
       headers: {
         "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${title.replace(/[^a-zA-Z0-9]/g, "_")}.${ext}"`,
+        "Content-Disposition": `attachment; filename*=UTF-8''${encodedTitle}.${ext}`,
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     });
-  } catch (error) {
-    console.error("Streaming error:", error);
-    return new Response("Failed to stream content", { status: 500 });
+  } catch (error: any) {
+    console.error("Streaming error Trace:", error.message || error);
+    return new Response(`Error: ${error.message}`, { status: 500 });
   }
 }
