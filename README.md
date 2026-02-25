@@ -85,7 +85,3 @@ YETE.io follows a **"YouTube Red/White"** theme but elevated with:
 - **Zero Gradients**: A clean, modern look achieved through solid geometry and subtle borders.
 
 ---
-
-<p align="center">
-  MADE WITH ❤️ FOR THE WEB | YETE.IO CORE ENGINE © 2026
-</p>
