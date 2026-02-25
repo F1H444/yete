@@ -28,36 +28,47 @@ export async function POST(request: NextRequest) {
 
     // Filter formats based on user preference
     let selectedFormat;
+    
     if (format === "audio") {
       // Get all audio formats
       const audioFormats = ytdl.filterFormats(info.formats, "audioonly");
-      // Prioritize m4a (aac) over webm (opus) for better compatibility
-      const m4aAudio = audioFormats.filter(f => f.container === 'mp4');
-      const targetAudio = m4aAudio.length > 0 ? m4aAudio : audioFormats;
-
-      selectedFormat = targetAudio.sort((a, b) => {
-        return (b.audioBitrate || 0) - (a.audioBitrate || 0);
+      
+      // Sort: Prioritize higher bitrate, then prefer mp4 container
+      selectedFormat = audioFormats.sort((a, b) => {
+        // Priority 1: Bitrate
+        const bitrateA = a.audioBitrate || 0;
+        const bitrateB = b.audioBitrate || 0;
+        if (bitrateB !== bitrateA) return bitrateB - bitrateA;
+        
+        // Priority 2: Container (prefer mp4/m4a)
+        if (a.container === 'mp4' && b.container !== 'mp4') return -1;
+        if (b.container === 'mp4' && a.container !== 'mp4') return 1;
+        
+        return 0;
       })[0];
       
       if (!selectedFormat) {
-        // Fallback to highestaudio if filter didn't work
         selectedFormat = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
       }
     } else {
-      // Get the highest quality video+audio stream
-      // We prioritize mp4 container for better compatibility
+      // For video, we first look for combined formats (video + audio) for simplicity and speed
       const combinedFormats = ytdl.filterFormats(info.formats, "videoandaudio");
       
-      const mp4Formats = combinedFormats.filter(f => f.container === 'mp4');
-      const targetFormats = mp4Formats.length > 0 ? mp4Formats : combinedFormats;
-
-      selectedFormat = targetFormats.sort((a, b) => {
-        const heightA = a.height || 0;
-        const heightB = b.height || 0;
-        if (heightB !== heightA) return heightB - heightA;
-        // If resolution is same, prioritize better bitrate
-        return (b.averageBitrate || 0) - (a.averageBitrate || 0);
-      })[0];
+      if (combinedFormats.length > 0) {
+        // Sort combined formats by height, then bitrate
+        selectedFormat = combinedFormats.sort((a, b) => {
+          const heightA = a.height || 0;
+          const heightB = b.height || 0;
+          if (heightB !== heightA) return heightB - heightA;
+          return (b.averageBitrate || 0) - (a.averageBitrate || 0);
+        })[0];
+      }
+      
+      // If no combined format found, or we want to ensure we get a format even if it's video-only
+      // (Note: video-only would require merging for a perfect result, but here we prioritize finding *something*)
+      if (!selectedFormat) {
+        selectedFormat = ytdl.chooseFormat(info.formats, { quality: "highest" });
+      }
     }
 
     if (!selectedFormat) {
@@ -68,7 +79,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`Selected format for ${format}:`, selectedFormat.itag, selectedFormat.container, selectedFormat.qualityLabel || selectedFormat.audioBitrate);
+    console.log(`Selected format for ${format}: itag=${selectedFormat.itag}, container=${selectedFormat.container}, quality=${selectedFormat.qualityLabel || selectedFormat.audioBitrate}`);
 
     const proxyUrl = `/api/stream?url=${encodeURIComponent(url)}&format=${format}&itag=${selectedFormat.itag}&title=${encodeURIComponent(videoDetails.title)}`;
 

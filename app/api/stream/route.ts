@@ -48,21 +48,33 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const nodeStream = ytdl(url, options);
+    const nodeStream = ytdl(url, {
+      ...options,
+      // Optimize for speed and reliability
+      requestOptions: {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        }
+      }
+    });
+
     const webStream = Readable.toWeb(nodeStream);
 
     const safeTitle = title.replace(/[^\x20-\x7E]/g, "").replace(/[\\/:*?"<>|]/g, "_");
     const encodedTitle = encodeURIComponent(safeTitle);
 
-    return new Response(webStream as any, {
-      headers: {
-        "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename*=UTF-8''${encodedTitle}.${ext}`,
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0",
-      },
-    });
+    const headers: Record<string, string> = {
+      "Content-Type": contentType,
+      "Content-Disposition": `attachment; filename*=UTF-8''${encodedTitle}.${ext}`,
+      "Cache-Control": "public, max-age=3600",
+    };
+
+    // If we have content length from the format, add it to headers for a progress bar
+    if (options.format?.contentLength) {
+      headers["Content-Length"] = options.format.contentLength;
+    }
+
+    return new Response(webStream as any, { headers });
   } catch (error: any) {
     console.error("Streaming error Trace:", error.message || error);
     return new Response(`Error: ${error.message}`, { status: 500 });

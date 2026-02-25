@@ -54,12 +54,9 @@ export default function DownloaderForm({ t }: DownloaderFormProps) {
         setVideoData(res.data);
         setProcessing(true);
         
-        // Use a more robust way to trigger the download
-        // window.location.assign is great for forcing the browser to handle the download response
-        setTimeout(() => {
-          window.location.assign(res.data.downloadUrl);
-          setProcessing(false);
-        }, 800);
+        // Trigger the download immediately for better UX
+        window.location.assign(res.data.downloadUrl);
+        setProcessing(false);
       }
     } catch (err: any) {
       setError(err.message || "Server connection failed. Please try again.");
