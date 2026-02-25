@@ -1,4 +1,4 @@
-# <p align="center">🚀 YETE.IO — Premium YouTube Extractor</p>
+# <p align="center">YETE— Premium YouTube Extractor</p>
 
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/b54c7bef-0858-4569-bab1-e56866f1525b" />
 
